@@ -1,429 +1,399 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>홍정민 | Portfolio</title>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="홍정민의 AI 엔지니어 포트폴리오. sLLM 파인튜닝·평가·서빙, ConnectBeat 데이터셋 구축, 병원 추천 서비스.">
+<title>홍정민 | AI 엔지니어 포트폴리오</title>
 <style>
   :root {
-    --bg: #fbfaf7; --card: #ffffff; --line: #e8e4da;
-    --text: #23201a; --muted: #6b6558;
-    --accent: #1a56db; --accent-soft: rgba(26,86,219,.08);
-    --shadow: 0 1px 2px rgba(35,32,26,.05), 0 10px 30px rgba(35,32,26,.07);
-    --shadow-sm: 0 1px 2px rgba(35,32,26,.04), 0 4px 12px rgba(35,32,26,.05);
+    color-scheme: light;
+    --page: #fbfaf7;
+    --paper: #fff;
+    --ink: #252219;
+    --muted: #59564d;
+    --line: #e4e0d6;
+    --accent: #1948aa;
+    --tint: #edf3ff;
   }
-  * { margin: 0; padding: 0; box-sizing: border-box; }
-  html, body { height: 100%; overflow: hidden; background: var(--bg); color: var(--text);
-    font-family: "Pretendard", "Noto Sans KR", "Segoe UI", sans-serif; }
-  strong { font-weight: 700; color: var(--text); }
-
-  /* ===== 슬라이드쇼: 크로스페이드 + 줌 ===== */
-  #slides { height: 100%; position: relative; }
-  .slide { position: absolute; inset: 0; height: 100vh; display: flex; padding: 6vh 8vw;
-    overflow-y: auto; overflow-x: hidden; opacity: 0; pointer-events: none;
-    transform: scale(1.05); filter: blur(6px);
-    transition: opacity .9s ease, transform 1s cubic-bezier(0.22,1,0.36,1), filter .9s ease; }
-  .slide.active { opacity: 1; pointer-events: auto; transform: none; filter: none; z-index: 2; }
-  .slide.leaving { opacity: 0; transform: scale(0.95); filter: blur(6px); z-index: 1; }
-  .slide-inner { max-width: 1060px; width: 100%; margin: auto; }
-  .slide-inner.narrow { max-width: 880px; }
-
-  .reveal { opacity: 0; transform: translateY(32px); transition: opacity .7s ease, transform .7s ease; }
-  .slide.active .reveal { opacity: 1; transform: none; }
-  .slide.active .reveal:nth-child(2) { transition-delay: .1s; }
-  .slide.active .reveal:nth-child(3) { transition-delay: .2s; }
-  .slide.active .reveal:nth-child(4) { transition-delay: .3s; }
-  .slide.active .reveal:nth-child(5) { transition-delay: .4s; }
-  .slide.active .reveal:nth-child(6) { transition-delay: .5s; }
-
-  .sec-label { color: var(--accent); font-size: .8rem; font-weight: 800; letter-spacing: .25em;
-    text-transform: uppercase; margin-bottom: 10px; }
-  .sec-title { font-size: clamp(1.7rem, 3.4vw, 2.4rem); font-weight: 800; margin-bottom: 8px; }
-  .sec-desc { color: var(--muted); font-size: .95rem; line-height: 1.8; margin-bottom: 30px; max-width: 580px; }
-
-  /* ===== 도트 내비 ===== */
-  #dots { position: fixed; right: 26px; top: 50%; transform: translateY(-50%); z-index: 50;
-    display: flex; flex-direction: column; gap: 13px; }
-  #dots button { width: 10px; height: 10px; border-radius: 50%; border: none; cursor: pointer;
-    background: #d9d3c6; transition: all .35s ease; padding: 0; }
-  #dots button.on { background: var(--accent); transform: scale(1.5); box-shadow: 0 0 12px rgba(26,86,219,.4); }
-
-  /* ===== 0. HERO (전체 화면) ===== */
-  .hero-bg { position: absolute; inset: 0; overflow: hidden; z-index: -1; }
-  .hero-bg::before { content: ""; position: absolute; width: 520px; height: 520px; border-radius: 50%;
-    filter: blur(120px); opacity: .5; background: rgba(26,86,219,.14); top: -140px; right: -100px; }
-  .hero-bg::after { content: ""; position: absolute; width: 420px; height: 420px; border-radius: 50%;
-    filter: blur(110px); opacity: .5; background: rgba(160,120,60,.1); bottom: -140px; left: -100px; }
-  .hero-flex { display: flex; align-items: center; justify-content: space-between; gap: 5vw; }
-  .hero-photo { width: clamp(180px, 21vw, 260px); border-radius: 22px; border: 1px solid var(--line);
-    box-shadow: var(--shadow); }
-  .eyebrow { color: var(--accent); font-size: .85rem; letter-spacing: .25em; text-transform: uppercase;
-    margin-bottom: 1rem; font-weight: 800; }
-  h1 { font-size: clamp(2.2rem, 5.2vw, 3.7rem); line-height: 1.22; font-weight: 800; }
-  h1 em { font-style: normal; color: var(--accent); }
-  p.lead { color: var(--muted); font-size: clamp(.98rem, 1.5vw, 1.1rem); line-height: 1.85;
-    margin-top: 1.3rem; max-width: 620px; }
-  .hero-core { margin-top: 1.8rem; background: var(--card); border-left: 4px solid var(--accent);
-    border-radius: 12px; padding: 18px 22px; box-shadow: var(--shadow-sm); max-width: 640px; }
-  .hero-core p { font-size: 1.02rem; line-height: 1.7; }
-  .hero-core .sub { color: var(--muted); font-size: .88rem; margin-top: 6px; }
-
-  /* ===== 1. 프로젝트 목록 ===== */
-  .proj-list { display: grid; gap: 16px; }
-  .proj-card { background: var(--card); border: 1px solid var(--line); border-radius: 16px;
-    padding: 24px 30px; cursor: pointer; position: relative; box-shadow: var(--shadow-sm);
-    display: grid; grid-template-columns: auto 1fr auto; gap: 22px; align-items: center;
-    transition: transform .3s, border-color .3s, box-shadow .3s; }
-  .proj-card:hover { transform: translateX(8px); border-color: var(--accent); box-shadow: var(--shadow); }
-  .proj-card.star { border-color: rgba(26,86,219,.45); }
-  .p-ico { display: flex; align-items: center; justify-content: center; width: 54px; height: 54px;
-    border-radius: 14px; font-size: 1.7rem; background: var(--accent-soft); }
-  .p-body h3 { font-size: 1.2rem; font-weight: 800; display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
-  .badge { background: var(--accent-soft); color: var(--accent); font-size: .7rem; font-weight: 800;
-    padding: 4px 10px; border-radius: 999px; }
-  .badge.gold { background: var(--accent); color: #fff; }
-  .p-body .p-when { color: var(--accent); font-size: .78rem; font-weight: 700; margin-top: 3px; }
-  .p-body p { color: var(--muted); font-size: .89rem; line-height: 1.7; margin-top: 6px; }
-  .p-go { color: var(--accent); font-size: 1.25rem; opacity: 0; transform: translateX(-6px); transition: all .3s; }
-  .proj-card:hover .p-go { opacity: 1; transform: none; }
-
-  /* ===== 프로젝트 상세 ===== */
-  .nav-row { display: flex; gap: 9px; flex-wrap: wrap; margin-bottom: 1.1rem; }
-  .back-btn { display: inline-flex; align-items: center; gap: 7px; background: var(--card);
-    border: 1px solid var(--line); color: var(--muted); cursor: pointer; padding: 7px 14px;
-    border-radius: 999px; font-size: .8rem; font-family: inherit; box-shadow: var(--shadow-sm); transition: all .25s; }
-  .back-btn:hover { color: var(--accent); border-color: var(--accent); }
-  .tl-head { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; margin-bottom: 4px; }
-  .tl-head h2 { font-size: clamp(1.5rem, 2.8vw, 2rem); font-weight: 800; }
-  .tl-when { color: var(--accent); font-weight: 800; font-size: .84rem; }
-  .tl-sub { color: var(--muted); font-size: .87rem; margin: 6px 0 16px; }
-  .why { font-size: .98rem; line-height: 1.85; margin-bottom: 20px; padding: 15px 20px;
-    background: var(--card); border-radius: 12px; border-left: 3px solid var(--accent); box-shadow: var(--shadow-sm); }
-  .why b { color: var(--accent); }
-  .story h4 { font-size: .85rem; color: var(--accent); letter-spacing: .06em; margin-bottom: 10px; }
-  .story-item { margin-bottom: 11px; }
-  .story-item .q { font-size: .92rem; font-weight: 700; margin-bottom: 2px; }
-  .story-item .q::before { content: "⚑ "; color: var(--accent); }
-  .story-item .a { color: var(--muted); font-size: .88rem; line-height: 1.75; padding-left: 19px; }
-  .learn { margin-top: 16px; font-size: .9rem; line-height: 1.75; color: var(--text);
-    background: var(--accent-soft); border-radius: 12px; padding: 13px 17px; }
-  .learn::before { content: "💡 느낀 점 — "; font-weight: 800; color: var(--accent); }
-  .tl-meta { display: flex; gap: 24px; margin-top: 18px; flex-wrap: wrap; }
-  .tl-meta .col { flex: 1; min-width: 210px; }
-  .tl-meta h5 { font-size: .78rem; color: var(--text); margin-bottom: 7px; }
-  .tl-meta ul { list-style: none; }
-  .tl-meta li { color: var(--muted); font-size: .83rem; line-height: 1.85; }
-  .tl-meta li::before { content: "▸ "; color: var(--accent); }
-  .chips { display: flex; flex-wrap: wrap; gap: 7px; }
-  .chips span { background: var(--card); border: 1px solid var(--line); border-radius: 8px;
-    padding: 5px 11px; font-size: .75rem; color: var(--muted); }
-  .arch-flow { display: flex; align-items: stretch; gap: 7px; flex-wrap: wrap; margin-top: 18px;
-    padding-top: 15px; border-top: 1px dashed var(--line); }
-  .arch-flow .node { flex: 1; min-width: 128px; background: var(--card); border: 1px solid var(--line);
-    border-radius: 10px; padding: 9px 11px; text-align: center; }
-  .arch-flow .node b { display: block; font-size: .76rem; white-space: nowrap; }
-  .arch-flow .node small { color: var(--muted); font-size: .66rem; line-height: 1.4; display: block; margin-top: 2px; }
-  .arch-flow .node.mine { border-color: var(--accent); box-shadow: 0 0 12px rgba(26,86,219,.12); }
-  .arch-flow .node.team { opacity: .45; }
-  .arch-flow .node .tag { display: inline-block; background: var(--accent); color: #fff; font-size: .56rem;
-    font-weight: 800; padding: 2px 7px; border-radius: 999px; margin-left: 4px; vertical-align: middle; }
-  .arch-flow .fa { align-self: center; color: var(--accent); font-size: .78rem; }
-  .links { margin-top: 18px; display: flex; gap: 9px; flex-wrap: wrap; }
-  .links a, .links button { color: var(--accent); text-decoration: none; font-size: .83rem;
-    border: 1px solid var(--line); padding: 8px 14px; border-radius: 10px; background: var(--card);
-    cursor: pointer; font-family: inherit; transition: all .25s; box-shadow: var(--shadow-sm); }
-  .links a:hover, .links button:hover { border-color: var(--accent); }
-
-  /* ===== Skills ===== */
-  .skill-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
-  .skill-card { background: var(--card); border: 1px solid var(--line); border-radius: 16px;
-    padding: 24px 28px; box-shadow: var(--shadow-sm); }
-  .skill-card.core { grid-column: 1 / -1; border-color: rgba(26,86,219,.4); }
-  .skill-card h3 { font-size: 1rem; margin-bottom: 13px; display: flex; align-items: center; gap: 9px; }
-  .skill-card.core h3::after { content: "CORE"; background: var(--accent); color: #fff; font-size: .62rem;
-    font-weight: 800; padding: 3px 10px; border-radius: 999px; letter-spacing: .08em; }
-  .skill-card ul { list-style: none; }
-  .skill-card.core ul { columns: 2; column-gap: 38px; }
-  .skill-card li { color: var(--muted); font-size: .9rem; line-height: 2; }
-  .skill-card li::before { content: "▸ "; color: var(--accent); }
-  .skill-card li b { color: var(--text); }
-  @media (max-width: 700px) { .skill-card.core ul { columns: 1; } .skill-grid { grid-template-columns: 1fr; } }
-
-  /* ===== Contact ===== */
-  .foot-contact { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 18px; }
-  .foot-contact a { color: var(--text); text-decoration: none; font-size: .92rem; font-weight: 700;
-    background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 13px 22px;
-    box-shadow: var(--shadow-sm); transition: all .25s; }
-  .foot-contact a:hover { border-color: var(--accent); color: var(--accent); }
-  .foot-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 16px; margin-top: 30px; }
-  .foot-col { background: var(--card); border: 1px solid var(--line); border-radius: 14px;
-    padding: 18px 20px; box-shadow: var(--shadow-sm); }
-  .foot-col h5 { font-size: .8rem; margin-bottom: 9px; }
-  .foot-col a { display: block; color: var(--muted); font-size: .8rem; text-decoration: none; line-height: 2.05; }
-  .foot-col a:hover { color: var(--accent); }
-  .copy { color: var(--muted); font-size: .72rem; margin-top: 32px; }
-
-  /* ===== 시연 영상 모달 ===== */
-  #videoModal { position: fixed; inset: 0; z-index: 100; display: none; align-items: center; justify-content: center;
-    background: rgba(20,18,12,.88); backdrop-filter: blur(8px); padding: 4vh 4vw; }
-  #videoModal.open { display: flex; }
-  #videoModal .vm-box { width: min(960px, 100%); }
-  #videoModal .vm-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
-  #videoModal .vm-title { font-size: .95rem; font-weight: 600; color: #fff; }
-  #videoModal .vm-close { background: var(--card); color: var(--text); border: 1px solid var(--line);
-    border-radius: 999px; padding: 8px 18px; cursor: pointer; font-family: inherit; font-size: .85rem; }
-  #videoModal video { width: 100%; max-height: 76vh; border-radius: 14px; background: #000; display: block; }
-
-  @media (max-width: 860px) {
-    #dots { right: 13px; }
-    .slide { padding: 7vh 7vw; }
-    .hero-flex { flex-direction: column-reverse; align-items: flex-start; gap: 24px; }
-    .hero-photo { width: 130px; border-radius: 16px; }
-    .proj-card { grid-template-columns: auto 1fr; }
-    .p-go { display: none; }
+  *, *::before, *::after { box-sizing: border-box; }
+  body {
+    margin: 0;
+    color: var(--ink);
+    background: var(--page);
+    font: 1rem/1.7 system-ui, "Malgun Gothic", sans-serif;
+    overflow-wrap: anywhere;
+    word-break: keep-all;
+  }
+  h1, h2, h3, p, figure { margin: 0; }
+  h1, h2, h3 { line-height: 1.2; letter-spacing: -.035em; }
+  h1 { font-size: clamp(2.6rem, 7vw, 5rem); }
+  h1 em { color: var(--accent); font-style: normal; }
+  h2 { font-size: clamp(1.85rem, 4.8vw, 3.2rem); }
+  h3 { font-size: 1.18rem; }
+  p + p { margin-top: .65rem; }
+  a { color: var(--accent); text-underline-offset: .22em; }
+  a:hover { text-decoration-thickness: 2px; }
+  :focus-visible { outline: 2px solid var(--accent); outline-offset: 4px; }
+  .wrap, .content-wrap {
+    width: min(100% - 2rem, 69rem);
+    margin-inline: auto;
+  }
+  .site-nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: .25rem 1rem;
+    min-height: 4rem;
+    padding-block: .45rem;
+  }
+  .site-nav a { display: inline-flex; align-items: center; min-height: 44px; }
+  .site-nav .brand { color: var(--ink); font-weight: 750; text-decoration: none; }
+  .nav-links { display: flex; flex-wrap: wrap; gap: 0 1rem; }
+  .skip-link { position: absolute; inset: .5rem auto auto 1rem; transform: translateY(-200%); background: var(--paper); padding: .5rem; }
+  .skip-link:focus { transform: none; }
+  .hero { border-block: 1px solid var(--line); }
+  .hero-flex {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(9rem, 15rem);
+    align-items: center;
+    gap: clamp(1.5rem, 6vw, 5rem);
+    padding-block: clamp(3rem, 8vw, 6rem);
+  }
+  .eyebrow, .sec-label {
+    color: var(--accent);
+    font-size: .9rem;
+    font-weight: 750;
+    margin-bottom: .75rem;
+  }
+  .lead { max-width: 39rem; margin-top: 1.2rem; color: var(--muted); font-size: 1.12rem; }
+  .hero-photo { display: block; width: 100%; aspect-ratio: 4 / 5; object-fit: cover; border-radius: 1rem; }
+  .hero-link {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+    margin-top: 1.5rem;
+    padding-inline: 1rem;
+    background: var(--accent);
+    color: #fff;
+    border-radius: .5rem;
+    text-decoration: none;
+    font-weight: 700;
+  }
+  .overview { padding-block: clamp(2.5rem, 7vw, 4.5rem); }
+  .project-index, .skill-grid, .foot-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: .85rem;
+    margin-top: 1.25rem;
+  }
+  .project-index a {
+    display: block;
+    border: 1px solid var(--line);
+    border-radius: .65rem;
+    background: var(--paper);
+    padding: .85rem 1rem;
+    color: var(--ink);
+    font-weight: 750;
+  }
+  .project-index span { display: block; color: var(--accent); font-size: .875rem; }
+  .project { border-top: 1px solid var(--line); padding-block: clamp(2.5rem, 7vw, 5rem); }
+  .project.core { background: var(--paper); }
+  .tl-when { display: block; margin-top: .55rem; color: var(--muted); font-size: .9rem; }
+  .tl-sub { margin-top: 1rem; font-size: 1.12rem; font-weight: 650; }
+  .why, .learn { max-width: 48rem; margin-top: .85rem; color: var(--muted); }
+  .story, .tl-meta, .arch-flow, .dataset, .results, .demos, .links { margin-top: 1.65rem; }
+  .story-item { border-top: 1px solid var(--line); padding-top: .7rem; margin-top: .75rem; }
+  .story-item .q { font-weight: 750; }
+  .story-item .a { margin-top: .25rem; color: var(--muted); }
+  .tl-meta, .demo-grid, .metrics {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1rem;
+  }
+  ul { padding-inline-start: 1.2rem; }
+  .chips, .arch-flow, .links, .foot-contact { display: flex; flex-wrap: wrap; align-items: center; gap: .45rem .75rem; }
+  .chips { margin-top: .75rem; }
+  .chips span, .tag { border-radius: .35rem; background: var(--tint); color: var(--accent); padding: .14rem .45rem; font-size: .875rem; }
+  .tag { margin-inline-start: .35rem; }
+  .node, .skill-card, .foot-col { background: var(--page); border: 1px solid var(--line); border-radius: .55rem; padding: .7rem .85rem; }
+  .node small, .foot-col a { display: block; }
+  .node.mine { border-color: #adc3f1; }
+  .dataset p, .results p, .demos h3 { margin-top: .6rem; }
+  .results { border-inline-start: .25rem solid var(--accent); border-radius: .45rem; background: var(--tint); padding: 1rem 1.2rem; }
+  .metrics { margin-block: .8rem; }
+  .metrics div { display: flex; flex-direction: column-reverse; justify-content: start; }
+  .metrics dd { margin: 0; color: var(--accent); font-size: clamp(1.45rem, 4vw, 2.35rem); font-weight: 800; }
+  .metrics dt, .result-note { color: var(--muted); font-size: .9rem; }
+  .demo-grid { margin-top: .8rem; }
+  .demo-grid figure { min-width: 0; }
+  figcaption { font-weight: 700; margin-bottom: .4rem; }
+  video { display: block; width: 100%; aspect-ratio: 16 / 9; background: #161923; border-radius: .6rem; }
+  .video-link, .links a, .foot-contact a, .foot-col a { display: inline-flex; align-items: center; min-height: 44px; }
+  .foot-col a { display: flex; }
+  .secondary { border-top: 1px solid var(--line); padding-block: 2.5rem; }
+  .sec-desc, .copy { color: var(--muted); margin-top: .75rem; }
+  .foot-contact { margin-top: .75rem; }
+  @media (max-width: 44rem) {
+    .project-index, .skill-grid, .foot-grid { grid-template-columns: 1fr; }
+    .hero-flex { grid-template-columns: minmax(0, 1fr) 6rem; }
+    .hero-photo { align-self: start; }
+  }
+  @media (max-width: 32rem) {
+    .hero-flex { grid-template-columns: 1fr; gap: 1rem; }
+    .hero-photo { width: 6rem; grid-row: 1; }
+    .tl-meta, .demo-grid { grid-template-columns: 1fr; }
+    .arch-flow { display: grid; }
     .arch-flow .fa { display: none; }
   }
 </style>
 </head>
 <body>
+<a class="skip-link" href="#main">본문으로 건너뛰기</a>
+<header class="wrap">
+  <nav class="site-nav" aria-label="주 메뉴">
+    <a class="brand" href="#main">홍정민</a>
+    <div class="nav-links">
+      <a href="#projects">프로젝트</a>
+      <a href="#skills">기술 스택</a>
+      <a href="#contact">연락처</a>
+    </div>
+  </nav>
+</header>
+<main id="main">
+  <section class="hero">
 
-<div id="slides">
-
-  <!-- ===== 0. HERO ===== -->
-  <section class="slide" id="s0">
-    <div class="hero-bg"></div>
-    <div class="slide-inner hero-flex">
+    <div class="content-wrap hero-flex">
       <div>
-        <p class="eyebrow reveal">AI Engineer · Backend</p>
-        <h1 class="reveal">모델을 만들고, <em>의심하고</em>,<br><em>배포</em>까지 책임집니다.</h1>
-        <p class="lead reveal">개발자 <strong>홍정민</strong>입니다. 두 번의 팀 프로젝트에서
-          AI 파트를 처음부터 끝까지 맡았고, 한 번은 백엔드·프론트로 서비스 전체를 만들었습니다.
-          학습이 끝난 모델은 절반일 뿐 —
-          <strong>평가 체계로 검증하고, 서버에 올려 서비스와 연결될 때</strong> 비로소 완성된다고 믿습니다.</p>
-        <div class="hero-core reveal">
-          <p><strong>LLM 파인튜닝 → 자동 평가 → 서빙 → 클라우드 배포</strong>를 End-to-End로 다룹니다.</p>
-          <p class="sub">Spring 백엔드와 React를 함께 다뤄, AI가 연결될 서비스 전체를 이해하고 협업합니다.</p>
-        </div>
+        <p class="eyebrow">AI Engineer · sLLM</p>
+        <h1>도메인 특화 sLLM을<br><em>학습하고 검증합니다</em></h1>
+        <p class="lead">AI 엔지니어 <strong>홍정민</strong>입니다. 소아응급 AI Agent에서 Qwen3.5-9B LoRA 파인튜닝, RAG 구축, 구조화 응답 평가를 맡았습니다. ConnectBeat에서는 대화 데이터셋을 구축하고 감정 분류 모델을 API로 배포했습니다.</p>
+        <a class="hero-link" href="#projects">프로젝트 보기</a>
       </div>
-      <img class="hero-photo reveal" src="assets/profile-clean.png" alt="홍정민 프로필 사진">
+      <img class="hero-photo" src="assets/profile-clean.png" alt="홍정민 프로필 사진" decoding="async">
     </div>
+    </section>
+  <section class="overview wrap" id="projects" aria-labelledby="projects-title">
+    <h2 id="projects-title">프로젝트</h2>
+    <nav class="project-index" aria-label="프로젝트 바로가기">
+      <a href="#pediatric-agent"><span>sLLM</span>소아응급 AI Agent</a>
+      <a href="#connectbeat"><span>데이터셋 구축</span>ConnectBeat</a>
+      <a href="#hospital-finder"><span>백엔드 · 프론트엔드</span>증상 기반 병원·진료과 추천</a>
+    </nav>
   </section>
+  <article class="project core" id="pediatric-agent" aria-labelledby="pediatric-title">
+    <div class="content-wrap narrow">
 
-  <!-- ===== 1. 프로젝트 목록 ===== -->
-  <section class="slide" id="s1">
-    <div class="slide-inner narrow">
-      <p class="sec-label reveal">Projects</p>
-      <h2 class="sec-title reveal">세 번의 프로젝트, 세 번의 성장</h2>
-      <p class="sec-desc reveal">대표 프로젝트부터 소개합니다. 각 프로젝트는
-        왜 시작했고, 무엇에 부딪혔고, 어떻게 해결했는지의 기록입니다.</p>
-      <div class="proj-list reveal">
-        <div class="proj-card star" data-branch="s2" role="button" tabindex="0" aria-label="소아응급 AI Agent 상세 보기">
-          <span class="p-ico">🚑</span>
-          <div class="p-body">
-            <h3>소아응급 AI Agent <span class="badge gold">⭐ 대표 · AI 파트</span></h3>
-            <p class="p-when">2026.06 – 2026.07 · MS ICT 과정</p>
-            <p>"AI가 함부로 말하지 못하게 만드는 것"이 과제였던 의료 상담 에이전트.
-              안전 Rule과 RAG로 LLM을 통제하는 설계.</p>
-          </div>
-          <span class="p-go">→</span>
-        </div>
-        <div class="proj-card" data-branch="s3" role="button" tabindex="0" aria-label="ConnectBeat 상세 보기">
-          <span class="p-ico">💬</span>
-          <div class="p-body">
-            <h3>ConnectBeat <span class="badge">AI 파트 단독</span></h3>
-            <p class="p-when">2025.06 – 2025.11 · 캡스톤 디자인</p>
-            <p>처음으로 혼자 맡은 AI 파트. 커플 채팅에서 8가지 감정의 흐름을 읽는 분석 서버.</p>
-          </div>
-          <span class="p-go">→</span>
-        </div>
-        <div class="proj-card" data-branch="s4" role="button" tabindex="0" aria-label="병원 추천 상세 보기">
-          <span class="p-ico">🏥</span>
-          <div class="p-body">
-            <h3>증상 기반 병원·진료과 추천 <span class="badge">백엔드/프론트</span></h3>
-            <p class="p-when">2025.10 – 2026.02 · 솔데스크 파이널</p>
-            <p>AI 밖으로 시야를 넓힌 프로젝트. 공공데이터 정제부터 화면까지 전 과정을 담당.</p>
-          </div>
-          <span class="p-go">→</span>
-        </div>
-      </div>
-    </div>
-  </section>
+      <div class="tl-head">
+        <p class="eyebrow">sLLM 핵심 프로젝트 · MS ICT 과정 · AI 파트</p>
+        <h2 id="pediatric-title">소아응급 AI Agent</h2>
 
-  <!-- ===== 2. 상세: 소아응급 (대표) ===== -->
-  <section class="slide" id="s2">
-    <div class="slide-inner narrow">
-      <div class="nav-row reveal">
-        <button class="back-btn" data-close>← 프로젝트 목록</button>
-        <button class="back-btn" data-branch="s3">ConnectBeat →</button>
-        <button class="back-btn" data-branch="s4">병원 추천 →</button>
-      </div>
-      <div class="tl-head reveal">
-        <h2>소아응급 AI Agent</h2>
-        <span class="badge gold">⭐ 대표 · MS ICT 과정 · AI 파트</span>
         <span class="tl-when">2026.06 – 2026.07</span>
       </div>
-      <p class="tl-sub reveal">보호자의 말에서 위험 신호를 선별하고 안전한 상담과 병원 안내까지 연결하는 에이전트</p>
-      <p class="why reveal"><b>왜 —</b> 새벽에 아이가 아픈 보호자에게 주어진 건 검색창뿐입니다.
+      <p class="tl-sub">보호자의 말에서 위험 신호를 선별하고 안전한 상담과 병원 안내까지 연결하는 에이전트</p>
+      <p class="why"><b>왜 —</b> 새벽에 아이가 아픈 보호자에게 주어진 건 검색창뿐입니다.
         하지만 의료에서 LLM의 환각은 곧 사고입니다. 이 프로젝트의 진짜 과제는
         <b>"AI가 함부로 말하지 못하게 만드는 것"</b>이었습니다.</p>
-      <div class="reveal">
+      <div class="project-content">
         <div class="story">
-          <h4>부딪힌 문제와 해결</h4>
+          <h3>부딪힌 문제와 해결</h3>
           <div class="story-item"><p class="q">LLM이 진단하듯 답해버리는 위험</p>
-            <p class="a">→ 모델보다 <strong>먼저 실행되는 45개 결정형 안전 Rule</strong>.
+            <p class="a">모델보다 <strong>먼저 실행되는 45개 결정형 안전 Rule</strong>.
               위험 신호는 코드가 즉시 판단하고 LLM은 그 다음에만 발화. 오탐·미탐 감사를 반복.</p></div>
           <div class="story-item"><p class="q">근거 없는 답변을 어떻게 막을까</p>
-            <p class="a">→ 승인된 의료 문서만 담은 <strong>Azure PostgreSQL(pgvector) RAG</strong>로 출처를 강제.</p></div>
+            <p class="a">승인된 의료 문서만 담은 <strong>Azure PostgreSQL(pgvector) RAG</strong>로 출처를 강제.</p></div>
           <div class="story-item"><p class="q">"좋아진 것 같은데?"라는 감</p>
-            <p class="a">→ <strong>정확도·안전성 judge + adversarial 케이스</strong>로 모든 변경을 수치로 검증.</p></div>
+            <p class="a"><strong>정확도·안전성 judge + adversarial 케이스</strong>로 모든 변경을 수치로 검증.</p></div>
           <div class="story-item"><p class="q">"숨을 쌕쌕거려요" — 구어체 보호자 표현</p>
-            <p class="a">→ <strong>Kiwi 형태소 계층 + Qwen3.5-9B LoRA 파인튜닝(H100)</strong>으로 보호자의 언어를 이해.</p></div>
+            <p class="a"><strong>Kiwi 형태소 계층 + Qwen3.5-9B LoRA 파인튜닝(H100)</strong>으로 보호자의 언어를 이해.</p></div>
         </div>
         <p class="learn">기능을 더하는 개발보다 실패를 막는 설계가 어렵고 중요했습니다.
           안전 도메인에서는 모델을 신뢰하지 않는 구조가 오히려 신뢰를 만듭니다.</p>
         <div class="tl-meta">
-          <div class="col"><h5>🙋 내가 맡은 부분 — AI 파트</h5>
+          <div class="col"><h3>내가 맡은 부분 — AI 파트</h3>
             <ul><li>Qwen3.5-9B LoRA 파인튜닝 · H100 파이프라인</li><li>45개 안전 Rule 설계 · 오탐/미탐 감사</li><li>Kiwi 분석 계층 · 문맥 구조화</li><li>PostgreSQL + pgvector RAG 구축</li><li>judge 자동 평가 체계</li></ul></div>
-          <div class="col"><h5>기술</h5>
+          <div class="col"><h3>기술</h3>
             <div class="chips"><span>Qwen3.5-9B</span><span>LoRA</span><span>H100</span><span>PostgreSQL · pgvector</span><span>Kiwi</span><span>Azure</span></div></div>
         </div>
         <div class="arch-flow">
-          <div class="node team"><b>📱 상담 앱 / UI</b><small>채팅형 문진</small></div>
-          <span class="fa">→</span>
-          <div class="node mine"><b>🛡️ 안전 Rule · Kiwi<span class="tag">담당</span></b><small>45개 결정형 Rule</small></div>
-          <span class="fa">→</span>
-          <div class="node mine"><b>🤖 Qwen3.5-9B + LoRA<span class="tag">담당</span></b><small>H100 파인튜닝</small></div>
-          <span class="fa">→</span>
-          <div class="node mine"><b>🗄️ PostgreSQL · pgvector<span class="tag">담당</span></b><small>승인 의료 근거 RAG</small></div>
+          <div class="node team"><b>상담 앱 / UI</b><small>채팅형 문진</small></div>
+          <span class="fa" aria-hidden="true">→</span>
+          <div class="node mine"><b>안전 Rule · Kiwi<span class="tag">담당</span></b><small>45개 결정형 Rule</small></div>
+          <span class="fa" aria-hidden="true">→</span>
+          <div class="node mine"><b>Qwen3.5-9B + LoRA<span class="tag">담당</span></b><small>H100 파인튜닝</small></div>
+          <span class="fa" aria-hidden="true">→</span>
+          <div class="node mine"><b>PostgreSQL · pgvector<span class="tag">담당</span></b><small>승인 의료 근거 RAG</small></div>
         </div>
+        <section class="results" aria-label="실험 결과">
+          <h3>실험 결과</h3>
+          <p>Qwen3.5-9B LoRA v3의 구조화 응답 평가입니다. 후처리를 포함한 최종 설정에서 JSON 파싱과 응답 형식 검사를 통과한 비율을 기록했습니다.</p>
+          <dl class="metrics"><div><dt>Holdout 형식 통과율 · 60건</dt><dd>96.67%</dd></div><div><dt>Challenge 형식 통과율 · 20건</dt><dd>95.00%</dd></div></dl>
+          <p class="result-note">출처는 프로젝트 내부 v3 최종 설정 평가 보고서입니다. 지표의 평가 범위는 응답 형식입니다.</p>
+        </section>
+        <section class="demos" aria-label="시연 영상">
+          <h3>시연 영상</h3>
+          <div class="demo-grid">
+            <figure>
+              <figcaption>소아응급 AI Agent 시연 1</figcaption>
+              <video controls playsinline preload="none" aria-label="소아응급 AI Agent 시연 1">
+                <source src="assets/pediatric-demo-1.mp4" type="video/mp4">
+                <a href="assets/pediatric-demo-1.mp4">MP4 열기</a>
+              </video>
+              <a class="video-link" href="assets/pediatric-demo-1.mp4">MP4 열기</a>
+            </figure>
+            <figure>
+              <figcaption>소아응급 AI Agent 시연 2</figcaption>
+              <video controls playsinline preload="none" aria-label="소아응급 AI Agent 시연 2">
+                <source src="assets/pediatric-demo-2.mp4" type="video/mp4">
+                <a href="assets/pediatric-demo-2.mp4">MP4 열기</a>
+              </video>
+              <a class="video-link" href="assets/pediatric-demo-2.mp4">MP4 열기</a>
+            </figure>
+          </div>
+        </section>
         <div class="links">
-          <a href="https://ai-agent.dusrkvk.workers.dev/" target="_blank">Live Demo ↗</a>
-          <button data-video="assets/pediatric-demo-1.mp4" data-title="소아응급 AI Agent 시연 영상 1">🎬 시연 영상 1</button>
-          <button data-video="assets/pediatric-demo-2.mp4" data-title="소아응급 AI Agent 시연 영상 2">🎬 시연 영상 2</button>
-        </div>
+          <a href="https://ai-agent.dusrkvk.workers.dev/" target="_blank" rel="noopener">Live Demo</a>
+                            </div>
       </div>
     </div>
-  </section>
+    </article>
+  <article class="project core" id="connectbeat" aria-labelledby="connectbeat-title">
+    <div class="content-wrap narrow">
 
-  <!-- ===== 3. 상세: ConnectBeat ===== -->
-  <section class="slide" id="s3">
-    <div class="slide-inner narrow">
-      <div class="nav-row reveal">
-        <button class="back-btn" data-close>← 프로젝트 목록</button>
-        <button class="back-btn" data-branch="s2">소아응급 AI →</button>
-        <button class="back-btn" data-branch="s4">병원 추천 →</button>
-      </div>
-      <div class="tl-head reveal">
-        <h2>ConnectBeat</h2>
-        <span class="badge">캡스톤 디자인 · AI 파트 단독</span>
+      <div class="tl-head">
+        <p class="eyebrow">데이터셋 구축 핵심 프로젝트 · 캡스톤 디자인 · AI 파트 단독</p>
+        <h2 id="connectbeat-title">ConnectBeat</h2>
+
         <span class="tl-when">2025.06 – 2025.11</span>
       </div>
-      <p class="tl-sub reveal">커플 채팅에서 8가지 감정의 흐름을 읽는 감정 분석 서비스</p>
-      <p class="why reveal"><b>왜 —</b> 다툰 뒤에야 "그때 서운했어"라는 말이 나옵니다.
+      <p class="tl-sub">커플 채팅에서 8가지 감정의 흐름을 읽는 감정 분석 서비스</p>
+      <p class="why"><b>왜 —</b> 다툰 뒤에야 "그때 서운했어"라는 말이 나옵니다.
         대화 속 감정을 데이터로 보여주면 서로를 이해하는 타이밍이 빨라질 수 있다고 생각했습니다.</p>
-      <div class="reveal">
+      <section class="dataset">
+        <h3>감정 라벨과 대화 문맥 설계</h3>
+        <p>기쁨, 설렘, 실망, 후회, 슬픔, 짜증, 불안, 중립의 8개 라벨을 사용했습니다. 현재 발화에 화자 토큰 <code>[GF]</code> 또는 <code>[BF]</code>를 붙이고, 앞선 발화를 <code>[CTX]</code>로 연결해 학습과 추론에서 대화의 흐름을 반영했습니다.</p>
+      </section>
+      <div class="project-content">
         <div class="story">
-          <h4>부딪힌 문제와 해결</h4>
+          <h3>부딪힌 문제와 해결</h3>
           <div class="story-item"><p class="q">"응" 한 마디로는 감정을 알 수 없다</p>
-            <p class="a">→ 직전 N개 발화를 <strong>[CTX] 토큰으로 잇고 화자 토큰 [GF]/[BF]를 설계</strong>해 대화 문맥째 학습·추론.</p></div>
+            <p class="a">직전 N개 발화를 <strong>[CTX] 토큰으로 잇고 화자 토큰 [GF]/[BF]를 설계</strong>해 대화 문맥째 학습·추론.</p></div>
           <div class="story-item"><p class="q">확률이 애매하게 퍼지고 사소한 말에 과민 반응</p>
-            <p class="a">→ 키워드 부스팅·부정어 감쇠·샤프닝·<strong>중립 복귀 휴리스틱을 강도 조절 가능한 옵션으로 계층화</strong>.</p></div>
+            <p class="a">키워드 부스팅·부정어 감쇠·샤프닝·<strong>중립 복귀 휴리스틱을 강도 조절 가능한 옵션으로 계층화</strong>.</p></div>
           <div class="story-item"><p class="q">모델은 있는데 앱은 어떻게 쓰지?</p>
-            <p class="a">→ FastAPI 서빙 + <strong>AWS EC2 직접 배포</strong>, 백엔드와 1분 단위 타임라인 집계 API 규격 설계.</p></div>
+            <p class="a">FastAPI 서빙 + <strong>AWS EC2 직접 배포</strong>, 백엔드와 1분 단위 타임라인 집계 API 규격 설계.</p></div>
         </div>
         <p class="learn">모델 정확도만큼 "팀이 쓰기 좋은 API"가 중요하다는 것 —
           서빙까지가 AI 개발이라는 걸 여기서 배웠습니다.</p>
         <div class="tl-meta">
-          <div class="col"><h5>🙋 내가 맡은 부분 (단독)</h5>
+          <div class="col"><h3>내가 맡은 부분 (단독)</h3>
             <ul><li>KcELECTRA 파인튜닝 · 8라벨 분류</li><li>FastAPI 추론 서버 · 문맥 반영</li><li>휴리스틱 후처리 계층</li><li>AWS EC2 배포 · 백엔드 연동</li></ul></div>
-          <div class="col"><h5>기술</h5>
+          <div class="col"><h3>기술</h3>
             <div class="chips"><span>KcELECTRA</span><span>PyTorch</span><span>Hugging Face</span><span>FastAPI</span><span>AWS EC2</span></div></div>
         </div>
         <div class="arch-flow">
-          <div class="node team"><b>📱 Flutter App</b><small>Dart</small></div>
-          <span class="fa">→</span>
-          <div class="node team"><b>⚙️ Spring Boot API</b><small>실시간 채팅</small></div>
-          <span class="fa">→</span>
-          <div class="node mine"><b>🤖 AI Server<span class="tag">담당</span></b><small>FastAPI · KcELECTRA</small></div>
-          <span class="fa">→</span>
-          <div class="node team"><b>☁️ AWS · MySQL</b><small>EC2는 AI 서버 직접 배포</small></div>
+          <div class="node team"><b>Flutter App</b><small>Dart</small></div>
+          <span class="fa" aria-hidden="true">→</span>
+          <div class="node team"><b>Spring Boot API</b><small>실시간 채팅</small></div>
+          <span class="fa" aria-hidden="true">→</span>
+          <div class="node mine"><b>AI Server<span class="tag">담당</span></b><small>FastAPI · KcELECTRA</small></div>
+          <span class="fa" aria-hidden="true">→</span>
+          <div class="node team"><b>AWS · MySQL</b><small>EC2는 AI 서버 직접 배포</small></div>
         </div>
+        <section class="results" aria-label="실험 결과">
+          <h3>실험 결과</h3>
+          <p>8개 감정 라벨 분류 평가에서 기록한 결과입니다. 정규화 혼동행렬에서는 슬픔 발화를 중립으로 분류한 사례가 두드러졌습니다.</p>
+          <dl class="metrics">
+            <div><dt>정확도</dt><dd>78.05%</dd></div>
+          </dl>
+          <p class="result-note">출처는 2025년 10월 25일 캡스톤 감정 분류 평가 기록입니다.</p>
+        </section>
+        <section class="demos" aria-label="시연 영상">
+          <h3>시연 영상</h3>
+          <div class="demo-grid">
+            <figure>
+              <figcaption>ConnectBeat 앱 시연</figcaption>
+              <video controls playsinline preload="none" aria-label="ConnectBeat 앱 시연">
+                <source src="assets/connectbeat-demo.mp4" type="video/mp4">
+                <a href="assets/connectbeat-demo.mp4">MP4 열기</a>
+              </video>
+              <a class="video-link" href="assets/connectbeat-demo.mp4">MP4 열기</a>
+            </figure>
+          </div>
+        </section>
         <div class="links">
-          <a href="https://github.com/SH-Capstone-Design/capstone-ai" target="_blank">AI Server ↗</a>
-          <a href="https://github.com/SH-Capstone-Design/Back-Capstone" target="_blank">Backend ↗</a>
-          <a href="https://github.com/SH-Capstone-Design/Front_Capstone" target="_blank">App ↗</a>
-          <button data-video="assets/connectbeat-demo.mp4" data-title="ConnectBeat 시연 영상">🎬 시연 영상</button>
-        </div>
+          <a href="https://github.com/SH-Capstone-Design/capstone-ai" target="_blank" rel="noopener">AI Server</a>
+          <a href="https://github.com/SH-Capstone-Design/Back-Capstone" target="_blank" rel="noopener">Backend</a>
+          <a href="https://github.com/SH-Capstone-Design/Front_Capstone" target="_blank" rel="noopener">App</a>
+                  </div>
       </div>
     </div>
-  </section>
+    </article>
+  <article class="project" id="hospital-finder" aria-labelledby="hospital-title">
+    <div class="content-wrap narrow">
 
-  <!-- ===== 4. 상세: 병원 추천 ===== -->
-  <section class="slide" id="s4">
-    <div class="slide-inner narrow">
-      <div class="nav-row reveal">
-        <button class="back-btn" data-close>← 프로젝트 목록</button>
-        <button class="back-btn" data-branch="s2">소아응급 AI →</button>
-        <button class="back-btn" data-branch="s3">ConnectBeat →</button>
-      </div>
-      <div class="tl-head reveal">
-        <h2>증상 기반 병원·진료과 추천</h2>
-        <span class="badge">솔데스크 파이널 · 백엔드/프론트</span>
+      <div class="tl-head">
+        <p class="eyebrow">서비스 개발 · 솔데스크 파이널 · 백엔드/프론트</p>
+        <h2 id="hospital-title">증상 기반 병원·진료과 추천</h2>
+
         <span class="tl-when">2025.10 – 2026.02</span>
       </div>
-      <p class="tl-sub reveal">증상을 말하면 진료과와 가까운 병원까지 이어주는 의료 웹 서비스</p>
-      <p class="why reveal"><b>왜 —</b> 아플 때 정말 어려운 건 치료가 아니라
+      <p class="tl-sub">증상을 말하면 진료과와 가까운 병원까지 이어주는 의료 웹 서비스</p>
+      <p class="why"><b>왜 —</b> 아플 때 정말 어려운 건 치료가 아니라
         "어느 병원, 무슨 과로 가야 하는지"였습니다. AI만 하던 시야를 넓혀
         백엔드와 프론트를 함께 맡았습니다.</p>
-      <div class="reveal">
+      <div class="project-content">
         <div class="story">
-          <h4>부딪힌 문제와 해결</h4>
+          <h3>부딪힌 문제와 해결</h3>
           <div class="story-item"><p class="q">공공 병원 데이터의 형식 불일치와 누락</p>
-            <p class="a">→ <strong>국립중앙의료원 API 데이터를 정제해 병원 DB 구축</strong>.
+            <p class="a"><strong>국립중앙의료원 API 데이터를 정제해 병원 DB 구축</strong>.
               데이터가 지저분하면 그 위의 모든 기능이 흔들린다는 걸 체감.</p></div>
           <div class="story-item"><p class="q">"가까운" 병원이 곧 "좋은" 병원은 아니다</p>
-            <p class="a">→ <strong>거리 계산 + 평점·리뷰 반영 추천 정렬</strong>, 예약·즐겨찾기까지
+            <p class="a"><strong>거리 계산 + 평점·리뷰 반영 추천 정렬</strong>, 예약·즐겨찾기까지
               백엔드부터 화면까지 구현.</p></div>
           <div class="story-item"><p class="q">병원까지 가는 길 안내</p>
-            <p class="a">→ 카카오·네이버 지도에 <strong>TMAP 도보 경로를 조합</strong>해 서비스별 한계 보완.</p></div>
+            <p class="a">카카오·네이버 지도에 <strong>TMAP 도보 경로를 조합</strong>해 서비스별 한계 보완.</p></div>
         </div>
         <p class="learn">4인 팀 feature 브랜치·PR 협업(백엔드 37커밋).
           데이터가 화면까지 닿는 전 과정을 처음 끝까지 책임져 봤습니다.</p>
         <div class="tl-meta">
-          <div class="col"><h5>🙋 내가 맡은 부분</h5>
+          <div class="col"><h3>내가 맡은 부분</h3>
             <ul><li>병원 데이터 구축 · 거리 기반 추천 API</li><li>평점·리뷰·예약·즐겨찾기 (백+프론트)</li><li>지도 연동 · TMAP 도보 경로</li><li>카카오 소셜 로그인 (LLM 파트는 팀원)</li></ul></div>
-          <div class="col"><h5>기술</h5>
+          <div class="col"><h3>기술</h3>
             <div class="chips"><span>Spring Boot</span><span>JPA</span><span>MySQL</span><span>React</span><span>공공데이터 API</span></div></div>
         </div>
         <div class="arch-flow">
-          <div class="node mine"><b>🖥️ React (Vite)<span class="tag">담당</span></b><small>병원 지도 · 예약 · 리뷰 UI</small></div>
-          <span class="fa">→</span>
-          <div class="node mine"><b>⚙️ Spring Boot API<span class="tag">담당</span></b><small>병원 추천 · 소셜 로그인</small></div>
-          <span class="fa">→</span>
-          <div class="node team"><b>🧠 FastAPI AI Server</b><small>증상 매칭 · RAG 챗봇</small></div>
-          <span class="fa">→</span>
-          <div class="node team"><b>🔎 Elasticsearch · MySQL</b><small>벡터 인덱스 · 병원 DB</small></div>
+          <div class="node mine"><b>React (Vite)<span class="tag">담당</span></b><small>병원 지도 · 예약 · 리뷰 UI</small></div>
+          <span class="fa" aria-hidden="true">→</span>
+          <div class="node mine"><b>Spring Boot API<span class="tag">담당</span></b><small>병원 추천 · 소셜 로그인</small></div>
+          <span class="fa" aria-hidden="true">→</span>
+          <div class="node team"><b>FastAPI AI Server</b><small>증상 매칭 · RAG 챗봇</small></div>
+          <span class="fa" aria-hidden="true">→</span>
+          <div class="node team"><b>Elasticsearch · MySQL</b><small>벡터 인덱스 · 병원 DB</small></div>
         </div>
+        <section class="results" aria-label="구현 결과">
+          <h3>구현 결과</h3>
+          <p>정제한 공공 병원 데이터를 거리·평점·리뷰를 반영한 추천 API에 연결했습니다. 추천 결과에서 지도, 도보 경로, 예약과 즐겨찾기를 이용할 수 있도록 구현했습니다.</p>
+        </section>
         <div class="links">
-          <a href="https://github.com/SoldeskFinalProject/Back-FP" target="_blank">Backend ↗</a>
-          <a href="https://github.com/SoldeskFinalProject/Front-FP" target="_blank">Frontend ↗</a>
-          <a href="https://github.com/SoldeskFinalProject/llm-service" target="_blank">AI Service ↗</a>
+          <a href="https://github.com/SoldeskFinalProject/Back-FP" target="_blank" rel="noopener">Backend</a>
+          <a href="https://github.com/SoldeskFinalProject/Front-FP" target="_blank" rel="noopener">Frontend</a>
+          <a href="https://github.com/SoldeskFinalProject/llm-service" target="_blank" rel="noopener">AI Service</a>
         </div>
       </div>
     </div>
-  </section>
+    </article>
+  <section class="secondary" id="skills">
+    <div class="content-wrap narrow">
 
-  <!-- ===== 5. Skills ===== -->
-  <section class="slide" id="s5">
-    <div class="slide-inner narrow">
-      <p class="sec-label reveal">Skills</p>
-      <h2 class="sec-title reveal">기술 스택</h2>
-      <p class="sec-desc reveal">전부 위 프로젝트에서 직접 손으로 쓴 기술만 적었습니다.</p>
-      <div class="skill-grid reveal">
+      <h2 class="sec-title">기술 스택</h2>
+      <p class="sec-desc">전부 위 프로젝트에서 직접 손으로 쓴 기술만 적었습니다.</p>
+      <div class="skill-grid">
         <div class="skill-card core">
-          <h3>🤖 AI / LLM Engineering</h3>
+          <h3>AI / LLM Engineering</h3>
           <ul>
-            <li><b>LLM LoRA 파인튜닝</b> (Qwen3.5-9B · KcELECTRA)</li>
+            <li><b>모델 파인튜닝</b> (Qwen3.5-9B LoRA · KcELECTRA)</li>
             <li><b>RAG 구축</b> — PostgreSQL · pgvector</li>
             <li><b>자동 평가</b> — judge · adversarial 케이스</li>
             <li><b>모델 서빙</b> — FastAPI · AWS EC2 배포</li>
@@ -432,7 +402,7 @@
           </ul>
         </div>
         <div class="skill-card">
-          <h3>⚙️ Backend</h3>
+          <h3>Backend</h3>
           <ul>
             <li>Java · Spring Boot 3 · JPA</li>
             <li>Spring Security · JWT · OAuth(카카오)</li>
@@ -441,7 +411,7 @@
           </ul>
         </div>
         <div class="skill-card">
-          <h3>🔗 Frontend · 협업</h3>
+          <h3>Frontend · 협업</h3>
           <ul>
             <li>React (Vite) · JavaScript</li>
             <li>지도 API (카카오·네이버·TMAP)</li>
@@ -450,148 +420,36 @@
         </div>
       </div>
     </div>
-  </section>
+    </section>
+</main>
+<footer class="secondary" id="contact">
+    <div class="content-wrap narrow">
 
-  <!-- ===== 6. Contact ===== -->
-  <section class="slide" id="s6">
-    <div class="slide-inner narrow">
-      <p class="sec-label reveal">Contact & Links</p>
-      <h2 class="sec-title reveal">함께 성장할 기회를 기다립니다</h2>
-      <div class="foot-contact reveal">
-        <a href="mailto:jeongmin12357@gmail.com">✉️ jeongmin12357@gmail.com</a>
-        <a href="https://github.com/HongJeongMin" target="_blank">🐙 github.com/HongJeongMin</a>
+      <h2 class="sec-title">연락처 및 프로젝트 링크</h2>
+      <div class="foot-contact">
+        <a href="mailto:jeongmin12357@gmail.com">jeongmin12357@gmail.com</a>
+        <a href="https://github.com/HongJeongMin" target="_blank" rel="noopener">github.com/HongJeongMin</a>
       </div>
-      <div class="foot-grid reveal">
+      <div class="foot-grid">
         <div class="foot-col">
-          <h5>🚑 소아응급 AI Agent</h5>
-          <a href="https://ai-agent.dusrkvk.workers.dev/" target="_blank">Live Demo ↗</a>
+          <h3>소아응급 AI Agent</h3>
+          <a href="https://ai-agent.dusrkvk.workers.dev/" target="_blank" rel="noopener">Live Demo</a>
         </div>
         <div class="foot-col">
-          <h5>💬 ConnectBeat</h5>
-          <a href="https://github.com/SH-Capstone-Design/capstone-ai" target="_blank">AI Server (담당) ↗</a>
-          <a href="https://github.com/SH-Capstone-Design/Back-Capstone" target="_blank">Backend ↗</a>
-          <a href="https://github.com/SH-Capstone-Design/Front_Capstone" target="_blank">Flutter App ↗</a>
+          <h3>ConnectBeat</h3>
+          <a href="https://github.com/SH-Capstone-Design/capstone-ai" target="_blank" rel="noopener">AI Server (담당)</a>
+          <a href="https://github.com/SH-Capstone-Design/Back-Capstone" target="_blank" rel="noopener">Backend</a>
+          <a href="https://github.com/SH-Capstone-Design/Front_Capstone" target="_blank" rel="noopener">Flutter App</a>
         </div>
         <div class="foot-col">
-          <h5>🏥 병원·진료과 추천</h5>
-          <a href="https://github.com/SoldeskFinalProject/Back-FP" target="_blank">Backend (담당) ↗</a>
-          <a href="https://github.com/SoldeskFinalProject/Front-FP" target="_blank">Frontend (담당) ↗</a>
-          <a href="https://github.com/SoldeskFinalProject/llm-service" target="_blank">AI Service ↗</a>
+          <h3>병원·진료과 추천</h3>
+          <a href="https://github.com/SoldeskFinalProject/Back-FP" target="_blank" rel="noopener">Backend (담당)</a>
+          <a href="https://github.com/SoldeskFinalProject/Front-FP" target="_blank" rel="noopener">Frontend (담당)</a>
+          <a href="https://github.com/SoldeskFinalProject/llm-service" target="_blank" rel="noopener">AI Service</a>
         </div>
       </div>
-      <p class="copy reveal">© 2026 Hong Jeongmin</p>
+      <p class="copy">© 2026 Hong Jeongmin</p>
     </div>
-  </section>
-
-</div>
-
-<nav id="dots" aria-label="슬라이드 이동"></nav>
-
-<div id="videoModal" role="dialog" aria-modal="true" aria-label="시연 영상">
-  <div class="vm-box">
-    <div class="vm-top"><span class="vm-title"></span><button class="vm-close">닫기 ✕</button></div>
-    <video controls preload="metadata"></video>
-  </div>
-</div>
-
-<script>
-(function () {
-  const slides = Array.from(document.querySelectorAll('.slide'));
-  const idx = id => slides.findIndex(s => s.id === id);
-  // 트리: 메인 4단계(홈→프로젝트 목록→기술→연락처) + 목록에서 갈라지는 상세(s2~s4)
-  const mainFlow = ['s0', 's1', 's5', 's6'].map(idx);
-  const mainLabels = ['홈', '프로젝트', '기술 스택', '연락처'];
-  const LIST = 1;
-  const sibs = ['s2', 's3', 's4'];
-  let mainIndex = 0, branch = null, currentSlide = mainFlow[0], animating = false;
-
-  const dotsNav = document.getElementById('dots');
-  mainFlow.forEach((_, i) => {
-    const b = document.createElement('button');
-    b.setAttribute('aria-label', mainLabels[i]);
-    b.addEventListener('click', () => goMain(i));
-    dotsNav.appendChild(b);
-  });
-  const dots = Array.from(dotsNav.children);
-
-  function render() {
-    slides.forEach((s, i) => s.classList.toggle('active', i === currentSlide));
-    dots.forEach((d, i) => d.classList.toggle('on', i === mainIndex));
-  }
-  function show(i) {
-    if (i === currentSlide) return;
-    animating = true;
-    const prev = slides[currentSlide];
-    prev.classList.add('leaving');
-    currentSlide = i;
-    render();
-    setTimeout(() => { prev.classList.remove('leaving'); prev.scrollTop = 0; animating = false; }, 1000);
-  }
-  function goMain(i) { if (animating || i < 0 || i >= mainFlow.length) return; branch = null; mainIndex = i; show(mainFlow[i]); }
-  function openBranch(id) { if (animating) return; branch = idx(id); mainIndex = LIST; show(branch); }
-  function closeBranch() { if (animating || branch === null) return; branch = null; show(mainFlow[LIST]); }
-  function step(dir) { if (branch !== null) closeBranch(); else goMain(mainIndex + dir); }
-  function atScrollEdge(dir) {
-    const s = slides[currentSlide];
-    if (s.scrollHeight <= s.clientHeight + 4) return true;
-    if (dir > 0) return s.scrollTop + s.clientHeight >= s.scrollHeight - 2;
-    return s.scrollTop <= 2;
-  }
-
-  document.querySelectorAll('[data-branch]').forEach(el => {
-    const open = () => openBranch(el.dataset.branch);
-    el.addEventListener('click', open);
-    el.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); open(); } });
-  });
-  document.querySelectorAll('[data-close]').forEach(el => el.addEventListener('click', closeBranch));
-
-  const modal = document.getElementById('videoModal');
-  const vmVideo = modal.querySelector('video');
-  const vmTitle = modal.querySelector('.vm-title');
-  const modalOpen = () => modal.classList.contains('open');
-  function openVideo(src, title) {
-    vmVideo.src = src; vmVideo.volume = 0.2;
-    vmTitle.textContent = title || '시연 영상';
-    modal.classList.add('open');
-    vmVideo.play().catch(() => {});
-  }
-  function closeVideo() { modal.classList.remove('open'); vmVideo.pause(); vmVideo.removeAttribute('src'); vmVideo.load(); }
-  document.querySelectorAll('[data-video]').forEach(b => b.addEventListener('click', () => openVideo(b.dataset.video, b.dataset.title)));
-  modal.querySelector('.vm-close').addEventListener('click', closeVideo);
-  modal.addEventListener('click', (e) => { if (e.target === modal) closeVideo(); });
-
-  window.addEventListener('wheel', (e) => {
-    if (modalOpen()) return;
-    if (Math.abs(e.deltaY) < 12) return;
-    const dir = e.deltaY > 0 ? 1 : -1;
-    if (!atScrollEdge(dir)) return;      // 슬라이드 내부 스크롤 먼저
-    step(dir);
-  }, { passive: true });
-
-  window.addEventListener('keydown', (e) => {
-    if (modalOpen()) { if (e.key === 'Escape') closeVideo(); return; }
-    if (['ArrowDown', 'PageDown', ' '].includes(e.key)) { e.preventDefault(); step(1); }
-    if (['ArrowUp', 'PageUp'].includes(e.key)) { e.preventDefault(); step(-1); }
-    if (e.key === 'Escape') closeBranch();
-    if (branch !== null && (e.key === 'ArrowLeft' || e.key === 'ArrowRight')) {
-      const pos = sibs.indexOf(slides[branch].id);
-      openBranch(sibs[(pos + (e.key === 'ArrowRight' ? 1 : sibs.length - 1)) % sibs.length]);
-    }
-    if (branch === null && e.key === 'Home') goMain(0);
-    if (branch === null && e.key === 'End') goMain(mainFlow.length - 1);
-  });
-
-  let touchY = null;
-  window.addEventListener('touchstart', (e) => { touchY = e.touches[0].clientY; }, { passive: true });
-  window.addEventListener('touchend', (e) => {
-    if (touchY === null || modalOpen()) return;
-    const dy = touchY - e.changedTouches[0].clientY;
-    if (Math.abs(dy) > 55) { const dir = dy > 0 ? 1 : -1; if (atScrollEdge(dir)) step(dir); }
-    touchY = null;
-  }, { passive: true });
-
-  render();
-})();
-</script>
+    </footer>
 </body>
 </html>
